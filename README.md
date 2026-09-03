@@ -26,3 +26,8 @@ O iOS não permite a uma app percorrer livremente o armazenamento privado de out
 ## Bundle IDs
 - Android: `pt.rjp.cleaner`
 - iOS: `pt.rjp.cleaner.ios`
+
+## V1.2 — Ícone oficial RJP Cleaner
+- Ícone oficial integrado no Android (mipmap + adaptive icon).
+- AppIcon completo integrado no iOS Assets.xcassets.
+- Ícones 1024 px para Play Store/App Store em `release-assets/`.
