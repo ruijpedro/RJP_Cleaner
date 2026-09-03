@@ -21,12 +21,13 @@ final class CleanerModel: ObservableObject {
     }
 
     func scanPhotos() async {
-        guard authorization == .authorized || authorization == .limited else {
+        if authorization != .authorized && authorization != .limited {
             await requestPhotoAccess()
-            guard authorization == .authorized || authorization == .limited else {
-                message = "Acesso à Fototeca não autorizado"
-                return
-            }
+        }
+
+        guard authorization == .authorized || authorization == .limited else {
+            message = "Acesso à Fototeca não autorizado"
+            return
         }
         isScanningPhotos = true
         message = "A analisar fotografias e vídeos…"
@@ -98,19 +99,37 @@ final class CleanerModel: ObservableObject {
         defer { if granted { url.stopAccessingSecurityScopedResource() } }
         guard granted else { message = "Sem autorização para esta pasta"; return }
 
-        let keys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey, .contentModificationDateKey]
-        guard let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys, options: [.skipsHiddenFiles]) else {
+        guard let found = Self.enumerateFiles(in: url) else {
             message = "Não foi possível ler a pasta"
             return
         }
-        var found: [FileItem] = []
-        for case let itemURL as URL in enumerator {
-            guard let values = try? itemURL.resourceValues(forKeys: Set(keys)), values.isRegularFile == true else { continue }
-            let size = Int64(values.fileSize ?? 0)
-            if size > 0 { found.append(FileItem(url: itemURL, size: size)) }
-        }
         files = found.sorted { $0.size > $1.size }
         message = "\(files.count) ficheiros encontrados"
+    }
+
+
+    private nonisolated static func enumerateFiles(in url: URL) -> [FileItem]? {
+        let keys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey, .contentModificationDateKey]
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: keys,
+            options: [.skipsHiddenFiles]
+        ) else {
+            return nil
+        }
+
+        var found: [FileItem] = []
+        while let itemURL = enumerator.nextObject() as? URL {
+            guard let values = try? itemURL.resourceValues(forKeys: Set(keys)),
+                  values.isRegularFile == true else {
+                continue
+            }
+            let size = Int64(values.fileSize ?? 0)
+            if size > 0 {
+                found.append(FileItem(url: itemURL, size: size))
+            }
+        }
+        return found
     }
 
     func deleteSelectedPhotos() async {

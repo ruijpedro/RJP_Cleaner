@@ -31,3 +31,9 @@ O iOS não permite a uma app percorrer livremente o armazenamento privado de out
 - Ícone oficial integrado no Android (mipmap + adaptive icon).
 - AppIcon completo integrado no iOS Assets.xcassets.
 - Ícones 1024 px para Play Store/App Store em `release-assets/`.
+
+## V1.2.1 — correção build iOS
+- Corrigido o fluxo de autorização da Fototeca em `CleanerModel.swift`.
+- Removido o `guard` inválido que fazia o Xcode falhar.
+- Enumeração de pastas movida para helper síncrono para evitar `makeIterator` em contexto assíncrono.
+- Mantidos Android, ícone oficial e workflows GitHub Actions.
