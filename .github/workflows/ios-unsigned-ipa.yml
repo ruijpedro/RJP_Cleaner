@@ -1,0 +1,63 @@
+name: iOS Unsigned IPA (AltStore-SideStore)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'iOS/**'
+      - '.github/workflows/ios-unsigned-ipa.yml'
+
+jobs:
+  build-unsigned-ipa:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: iOS
+        run: xcodegen generate
+
+      - name: Build unsigned app for physical iPhone/iPad
+        working-directory: iOS
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project RJPCleaner.xcodeproj \
+            -scheme RJPCleaner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$GITHUB_WORKSPACE/build/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+          APP_PATH=$(find "$GITHUB_WORKSPACE/build/DerivedData/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Nenhum .app encontrado em Release-iphoneos"
+            exit 1
+          fi
+          mkdir -p "$GITHUB_WORKSPACE/build/Payload"
+          cp -R "$APP_PATH" "$GITHUB_WORKSPACE/build/Payload/"
+          cd "$GITHUB_WORKSPACE/build"
+          /usr/bin/zip -qry "RJP-Cleaner-Unsigned.ipa" Payload
+          shasum -a 256 "RJP-Cleaner-Unsigned.ipa" > "RJP-Cleaner-Unsigned.ipa.sha256"
+
+      - name: Upload unsigned IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RJP-Cleaner-iOS-Unsigned-IPA
+          path: |
+            build/RJP-Cleaner-Unsigned.ipa
+            build/RJP-Cleaner-Unsigned.ipa.sha256
+          if-no-files-found: error
+          retention-days: 30
