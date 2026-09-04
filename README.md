@@ -47,3 +47,6 @@ O iOS não permite a uma app percorrer livremente o armazenamento privado de out
 - Screenshots antigos e ficheiros de instalação entram nas recomendações.
 - Duplicados exatos podem ser marcados como candidatos a limpeza.
 - O RJP Cleaner nunca elimina conteúdo pessoal silenciosamente: a eliminação exige confirmação do utilizador.
+
+## V1.3.1 — TestFlight
+O projeto inclui agora `.github/workflows/ios-testflight.yml` para gerar um `.ipa` assinado e enviá-lo para TestFlight. Antes da primeira execução, seguir `TESTFLIGHT_SETUP.md` e criar os 7 GitHub Secrets indicados.
