@@ -1,34 +1,19 @@
 name: iOS Build
-
 on:
   workflow_dispatch:
   push:
     branches: [ main, master ]
-    paths:
-      - 'iOS/**'
-      - '.github/workflows/ios.yml'
-
+    paths: [ 'iOS/**', '.github/workflows/ios.yml' ]
 jobs:
   build:
     runs-on: macos-15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
+      - uses: actions/checkout@v5
       - name: Install XcodeGen
         run: brew install xcodegen
-
       - name: Generate Xcode project
         working-directory: iOS
         run: xcodegen generate
-
       - name: Build for iOS Simulator
         working-directory: iOS
-        run: |
-          xcodebuild \
-            -project RJPCleaner.xcodeproj \
-            -scheme RJPCleaner \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO \
-            build
+        run: xcodebuild -project RJPCleaner.xcodeproj -scheme RJPCleaner -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
