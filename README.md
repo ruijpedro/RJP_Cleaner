@@ -54,3 +54,11 @@ O iOS não permite a uma app percorrer livremente o armazenamento privado de out
 - Não requer TestFlight nem Secrets Apple no GitHub.
 - Inclui `IOS_FREE_SIDELOAD.md` com instalação num iPhone usando Apple ID gratuita + Personal Team no Xcode.
 - Workflows atualizados para `actions/checkout@v5`.
+
+
+## V1.3.3 — SideStore / AltStore
+- Novo workflow `iOS Unsigned IPA (AltStore-SideStore)`.
+- Gera `RJP-Cleaner-Unsigned.ipa` para instalação gratuita por sideload.
+- O IPA é disponibilizado como Artifact no GitHub Actions.
+- SideStore/AltStore fazem a assinatura final com Apple Account gratuita.
+- Incluído `IOS_ALTSTORE_SIDESTORE.md` com o passo a passo.
