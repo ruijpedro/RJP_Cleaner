@@ -1,25 +1,29 @@
 import Foundation
 import Photos
 
-struct PhotoItem: Identifiable, Hashable {
-    let id: String
-    let asset: PHAsset
-    var size: Int64
-    var selected: Bool = false
-
-    var title: String { asset.mediaType == .video ? "Vídeo" : "Foto" }
-    var subtitle: String {
-        let date = asset.creationDate?.formatted(date: .abbreviated, time: .omitted) ?? "Sem data"
-        return "\(ByteCountFormatter.string(fromByteCount: size, countStyle: .file)) · \(date)"
-    }
+enum PhotoFilter: String, CaseIterable, Identifiable {
+    case all, recommended, photos, videos
+    var id: String { rawValue }
+    var title: String { switch self { case .all: "Todos"; case .recommended: "Sugestões"; case .photos: "Fotos"; case .videos: "Vídeos" } }
 }
 
-struct FileItem: Identifiable, Hashable {
+struct PhotoItem: Identifiable {
+    let id: String
+    let asset: PHAsset
+    let size: Int64
+    var selected = false
+    var recommended = false
+    var isVideo: Bool { asset.mediaType == .video }
+    var isScreenshot: Bool { asset.mediaSubtypes.contains(.photoScreenshot) }
+    var title: String { isVideo ? "Vídeo" : (isScreenshot ? "Screenshot" : "Fotografia") }
+    var subtitle: String { ByteCountFormatter.string(fromByteCount: size, countStyle: .file) }
+}
+
+struct FileItem: Identifiable {
     let id = UUID()
     let url: URL
     let size: Int64
-    var selected: Bool = false
-
+    var selected = false
     var name: String { url.lastPathComponent }
-    var subtitle: String { ByteCountFormatter.string(fromByteCount: size, countStyle: .file) }
+    var subtitle: String { ByteCountFormatter.string(fromByteCount: size, countStyle: .file) + " · " + url.deletingLastPathComponent().lastPathComponent }
 }

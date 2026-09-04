@@ -37,3 +37,13 @@ O iOS não permite a uma app percorrer livremente o armazenamento privado de out
 - Removido o `guard` inválido que fazia o Xcode falhar.
 - Enumeração de pastas movida para helper síncrono para evitar `makeIterator` em contexto assíncrono.
 - Mantidos Android, ícone oficial e workflows GitHub Actions.
+
+## V1.3 — Galeria visual e gestão inteligente de espaço
+- Miniaturas reais de fotografias e vídeos no iOS e Android.
+- Filtros iOS: Todos, Sugestões, Fotos e Vídeos.
+- Seleção múltipla visual com tamanho por item.
+- Análise automática ao abrir (configurável).
+- Regras configuráveis para media grande e conteúdos antigos.
+- Screenshots antigos e ficheiros de instalação entram nas recomendações.
+- Duplicados exatos podem ser marcados como candidatos a limpeza.
+- O RJP Cleaner nunca elimina conteúdo pessoal silenciosamente: a eliminação exige confirmação do utilizador.
